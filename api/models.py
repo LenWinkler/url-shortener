@@ -1,3 +1,5 @@
 from django.db import models
 
-# Create your models here.
+class Url(models.Model):
+    raw = models.CharField(max_length=250)
+    url_hash = models.CharField(max_length=8)

@@ -11,11 +11,17 @@ def index(request):
 @api_view(['POST'])
 def create(request):
     encoded_url = request.data['raw_url'].encode('utf-8')
-    url_hash = hashlib.sha256(encoded_url).hexdigest()[:8]
+    hashed_url = hashlib.sha256(encoded_url).hexdigest()[:8]
 
-    response = {
-        request.data['raw_url'],
-        url_hash
+    data_for_serializer = {
+        raw = request.data['raw'],
+        url_hash = hashed_url,
+        short = fr'http://127.0.0.1:8000/api/{url_hash}'
     }
 
-    return Response(response)
+    serializer = UrlSerializer(data=data_for_serializer)
+
+    if serializer.is_valid():
+        serializer.save()
+
+    return Response(serializer.data)

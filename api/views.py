@@ -1,14 +1,23 @@
-from django.shortcuts import render
+from django.shortcuts import redirect
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 import hashlib
 from .serializers import UrlSerializer
 from .hash_checker import url_hash_exists
+from .models import Url
 
 @api_view(['GET'])
 def index(request):
+    
     return Response('api is up')
+
+@api_view(['GET'])
+def retrieve(request, existing_hash):
+    url = Url.objects.get(url_hash=existing_hash)
+    serializer = UrlSerializer(url)
+
+    return redirect(serializer.data['raw'])
 
 @api_view(['POST'])
 def create(request):

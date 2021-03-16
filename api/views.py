@@ -9,15 +9,17 @@ from .models import Url
 
 @api_view(['GET'])
 def index(request):
-    
+
     return Response('api is up')
 
 @api_view(['GET'])
 def retrieve(request, existing_hash):
-    url = Url.objects.get(url_hash=existing_hash)
-    serializer = UrlSerializer(url)
-
-    return redirect(serializer.data['raw'])
+    url_is_valid = url_hash_exists(existing_hash)
+    if url_is_valid:
+        serializer = UrlSerializer(url_is_valid)
+        return redirect(serializer.data['raw'])
+    
+    return Response('Url not found', status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
 def create(request):

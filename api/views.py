@@ -8,12 +8,12 @@ from .hash_checker import url_hash_exists
 from .models import Url
 
 @api_view(['GET'])
-def index(request):
+def api_info(request):
 
     return Response('api is up')
 
 @api_view(['GET'])
-def retrieve(request, existing_hash):
+def retrieve_url(request, existing_hash):
     url_is_valid = url_hash_exists(existing_hash)
     if url_is_valid:
         serializer = UrlSerializer(url_is_valid)
@@ -22,7 +22,7 @@ def retrieve(request, existing_hash):
     return Response('Url not found', status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
-def create(request):
+def create_url(request):
     encoded_url = request.data['raw'].encode('utf-8')
     hashed_url = hashlib.sha256(encoded_url).hexdigest()[:8]
     

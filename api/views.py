@@ -1,4 +1,5 @@
 from django.shortcuts import redirect
+from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -23,24 +24,38 @@ def retrieve_url(request, existing_hash):
 
 @api_view(['POST'])
 def create_url(request):
-    encoded_url = request.data['raw'].encode('utf-8')
-    hashed_url = hashlib.sha256(encoded_url).hexdigest()[:8]
-    
-    already_exists = url_hash_exists(hashed_url)
-    if already_exists:
-        serializer = UrlSerializer(already_exists)  
-        return Response(serializer.data, status=status.HTTP_200_OK)
-        
     data_for_serializer = {
         'raw': request.data['raw'],
-        'url_hash': hashed_url,
-        'short': fr'http://127.0.0.1:8000/{hashed_url}'
+        'url_hash': '',
+        'short': ''
     }
 
-    serializer = UrlSerializer(data=data_for_serializer)
+    try: # if user passed a custom url in the request body
+        custom_url = request.data['custom']
+        custom_hash_already_exists = url_hash_exists(custom_url)
+        if custom_hash_already_exists:
+            return JsonResponse({'Error': 'This url is unavailable'})
 
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        data_for_serializer['url_hash'] = custom_url
+        data_for_serializer['short'] = f'http://127.0.0.1:8000/api/{custom_url}/'
+        serializer = UrlSerializer(data=data_for_serializer)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    except: # if no custom url was passed
+        encoded_url = request.data['raw'].encode('utf-8')
+        hashed_url = hashlib.sha256(encoded_url).hexdigest()[:8]
 
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        already_exists = url_hash_exists(hashed_url)
+        if already_exists:
+            serializer = UrlSerializer(already_exists)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        data_for_serializer['url_hash'] = hashed_url
+        data_for_serializer['short'] = f'http://127.0.0.1:8000/api/{hashed_url}/'
+        serializer = UrlSerializer(data=data_for_serializer)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -11,9 +11,9 @@ from .models import Url
 @api_view(['GET'])
 def api_info(request):
     return Response(
-        {"GET '/'": "returns info about api",
-         "POST '/'": "create url. req body --> {'raw':'<full url>', 'custom'(optional):'<custom url>'}",
-         "GET '/<existing url>/": "if url is valid, will redirect to the full length url"
+        {"GET '/'": "Returns info about api",
+         "POST '/'": "Create url. Req body --> {'raw':'<full url>', 'custom'(optional):'<custom url>'}",
+         "GET '/<existing url>/'": "If url is valid, will redirect to the full length url"
         })
 
 @api_view(['GET'])

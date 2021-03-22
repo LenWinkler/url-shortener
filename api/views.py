@@ -35,15 +35,15 @@ def create_url(request):
 
         if not re.search(r'^[a-zA-Z0-9]{3,8}$', custom_url):
             return Response(
-                {'Error': """Url can only contain alphanumeric chars and must be between 3-8 chars long"""},
+                {'Error': 'Url can only contain alphanumeric chars and must be between 3-8 chars long'},
                  status=status.HTTP_400_BAD_REQUEST)
 
         custom_hash_already_exists = url_hash_exists(custom_url)
         if custom_hash_already_exists:
-            return Response({'Error': 'This url is unavailable'})
+            return Response({'Error': 'This url is already taken'}, status=status.HTTP_409_CONFLICT)
 
         data_for_serializer['url_hash'] = custom_url
-        data_for_serializer['short'] = f'http://127.0.0.1:8000/api/{custom_url}/'
+        data_for_serializer['short'] = f'http://127.0.0.1:8000/{custom_url}/'
         serializer = UrlSerializer(data=data_for_serializer)
         if serializer.is_valid():
             serializer.save()
@@ -58,10 +58,10 @@ def create_url(request):
         already_exists = url_hash_exists(hashed_url)
         if already_exists:
             serializer = UrlSerializer(already_exists)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({'already_exists': f'{serializer.data["short"]}'}, status=status.HTTP_200_OK)
 
         data_for_serializer['url_hash'] = hashed_url
-        data_for_serializer['short'] = f'http://127.0.0.1:8000/api/{hashed_url}/'
+        data_for_serializer['short'] = f'http://127.0.0.1:8000/{hashed_url}/'
         serializer = UrlSerializer(data=data_for_serializer)
         if serializer.is_valid():
             serializer.save()

@@ -10,8 +10,11 @@ from .models import Url
 
 @api_view(['GET'])
 def api_info(request):
-
-    return Response('api is up')
+    return Response(
+        {"GET '/'": "returns info about api",
+         "POST '/'": "create url. req body --> {'raw':'<full url>', 'custom'(optional):'<custom url>'}",
+         "GET '/<existing url>/": "if url is valid, will redirect to the full length url"
+        })
 
 @api_view(['GET'])
 def retrieve_url(request, existing_hash):

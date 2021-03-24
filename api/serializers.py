@@ -1,5 +1,7 @@
 from rest_framework import serializers
+
 from .models import Url
+
 
 class UrlSerializer(serializers.ModelSerializer):
     raw = serializers.URLField(max_length=250)

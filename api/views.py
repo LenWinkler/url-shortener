@@ -1,12 +1,15 @@
-from django.shortcuts import redirect
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from rest_framework import status
 import hashlib
 import re
-from .serializers import UrlSerializer
+
+from django.shortcuts import redirect
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 from .hash_checker import url_hash_exists
 from .models import Url
+from .serializers import UrlSerializer
+
 
 @api_view(['GET'])
 def api_info(request):

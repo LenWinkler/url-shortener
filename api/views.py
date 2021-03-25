@@ -15,7 +15,7 @@ def retrieve_url(request, existing_hash):
     url_is_valid = url_hash_exists(existing_hash)
     if url_is_valid:
         serializer = UrlSerializer(url_is_valid)
-        return redirect(serializer.data['raw'])
+        return redirect(serializer.data['raw'], permanent=True)
     
     return Response(
         {'Error':'Url not found'}, status=status.HTTP_404_NOT_FOUND)

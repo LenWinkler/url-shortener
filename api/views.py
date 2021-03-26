@@ -20,7 +20,7 @@ def retrieve_url(request, existing_hash):
     return Response(
         {'Error':'Url not found'}, status=status.HTTP_404_NOT_FOUND)
 
-@api_view(['POST'])
+@api_view(['POST', 'GET'])
 def create_url(request):
     try: # check to make sure 'raw' key is in req body
         data_for_serializer = {

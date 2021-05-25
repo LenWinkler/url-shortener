@@ -47,7 +47,8 @@ def create_url(request):
                      status=status.HTTP_409_CONFLICT)
 
             data_for_serializer['url_hash'] = custom_url
-            data_for_serializer['short'] = f'http://127.0.0.1:8000/{custom_url}/'
+            data_for_serializer['short'] = f'https://shortn-it.herokuapp.com' \
+                                            '/{custom_url}/'
             serializer = UrlSerializer(data=data_for_serializer)
             if serializer.is_valid():
                 serializer.save()
@@ -69,7 +70,8 @@ def create_url(request):
                      status=status.HTTP_200_OK)
 
             data_for_serializer['url_hash'] = hashed_url
-            data_for_serializer['short'] = f'http://127.0.0.1:8000/{hashed_url}/'
+            data_for_serializer['short'] = f'https://shortn-it.herokuapp.com' \
+                                            '/{hashed_url}/'
             serializer = UrlSerializer(data=data_for_serializer)
             if serializer.is_valid():
                 serializer.save()

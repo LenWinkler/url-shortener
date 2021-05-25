@@ -5,16 +5,16 @@ class URLTestCases(APITestCase):
 
     def test_create_url(self):
         data = {
-            "raw": "https://realpython.com/pypi-publish-python-package/" \
-                   "#preparing-your-package-for-publication"
+            "raw": ("https://realpython.com/pypi-publish-python-package/"
+                   "#preparing-your-package-for-publication")
             }
         response = self.client.post('/', data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         
     def test_create_custom_url(self):
         data = {
-            "raw": "https://realpython.com/pypi-publish-python-package/" \
-                   "#preparing-your-package-for-publication",
+            "raw": ("https://realpython.com/pypi-publish-python-package/"
+                   "#preparing-your-package-for-publication"),
             "custom": "custom25"
             }
         response = self.client.post('/', data)
@@ -39,17 +39,17 @@ class URLTestCases(APITestCase):
 
     def test_create_existing_url(self):
         data = {
-            "raw": "https://genius.com/" \
-                   "Gregory-alan-isakov-if-i-go-im-goin-lyrics"
+            "raw": ("https://genius.com/"
+                   "Gregory-alan-isakov-if-i-go-im-goin-lyrics")
             }
         first_response = self.client.post('/', data)
         second_response = self.client.post('/', data)
-        self.assertIn('already_exists', second_response.data)
+        self.assertIn('Error', second_response.data)
 
     def test_create_existing_custom_url(self):
         data = {
-            "raw": "https://genius.com/" \
-                   "The-mountain-goats-game-shows-touch-our-lives-lyrics",
+            "raw": ("https://genius.com/"
+                   "The-mountain-goats-game-shows-touch-our-lives-lyrics"),
                    "custom": "gameshow"
             }
         first_response = self.client.post('/', data)
@@ -58,8 +58,8 @@ class URLTestCases(APITestCase):
 
     def test_create_invalid_custom_url(self):
         data = {
-            "raw": "https://genius.com/" \
-                   "Led-zeppelin-going-to-california-lyrics",
+            "raw": ("https://genius.com/"
+                   "Led-zeppelin-going-to-california-lyrics"),
                    "custom": "ThisURLIsTooLong"
             }
         response = self.client.post('/', data)

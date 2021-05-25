@@ -10,4 +10,4 @@ class UrlSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Url
-        fields = '__all__'
+        fields = ('raw', 'url_hash', 'short')

@@ -83,8 +83,5 @@ def create_url(request):
 
     except:
         return Response(
-                        {"Error": "Missing 'raw' key in body of request",
-                        "req": request,
-                        "req data": request.data
-                        },
+                        {"Error": "Missing 'raw' key in body of request"},
                         status=status.HTTP_400_BAD_REQUEST)

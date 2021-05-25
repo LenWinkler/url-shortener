@@ -1,7 +1,7 @@
 # url-shortener
 
 URL shortener built with Django Rest Framework. User provides a url and the api returns an alternate URL that will redirect to the original.
-I don't know how a URL shortener actually works so this was my attempt to reverse engineer the basic functionality of one.
+I don't know how a URL shortener actually works so this was my attempt to reverse engineer the basic functionality of one. Note: If this was a production app, I'd obviously purchase a short domain name to use!
 
 ## There are two endpoints:
 
@@ -15,7 +15,6 @@ Endpoint for creating a new URL. The raw URL is passed in the body of the POST r
 Response:
 ```
 {
-    "id": 38,
     "raw": "https://realpython.com/pypi-publish-python-package/#preparing-your-package-for-publication",
     "url_hash": "a65417c4",
     "short": "https://shortn-it.herokuapp.com/a65417c4/"
@@ -31,7 +30,6 @@ Can specify a custom URL (3-8 alphanumeric chars) to use by including it in the 
 Response:
 ```
 {
-    "id": 40,
     "raw": "https://realpython.com/pypi-publish-python-package/#preparing-your-package-for-publication",
     "url_hash": "custom",
     "short": "https://shortn-it.herokuapp.com/custom/"

@@ -1,4 +1,4 @@
-from .models import Url
+from url.models import Url
 
 def url_hash_exists(hashed_url):
     try:

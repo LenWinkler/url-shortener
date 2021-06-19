@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 
-from . import views
+from url import views
 
 urlpatterns = [
     path('', views.create_url, name='create-url'),

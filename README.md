@@ -1,7 +1,7 @@
 # url-shortener
 
 URL shortener built with Django Rest Framework. User provides a url and the api returns an alternate URL that will redirect to the original.
-I don't know how a URL shortener actually works so this was my attempt to reverse engineer the basic functionality of one. Note: If this was a production app, I'd obviously purchase a shorter domain name to use!
+I don't know how a URL shortener actually works so this was my attempt to reverse engineer the basic functionality of one. ***Note: If this was a production app, I'd obviously purchase a shorter domain name to use!***  😁
 
 ## There are two endpoints:
 

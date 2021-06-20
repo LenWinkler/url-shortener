@@ -20,8 +20,3 @@ def registration_view(request):
     
     return Response(data, status.HTTP_400_BAD_REQUEST)
 
-
-
-
-
-

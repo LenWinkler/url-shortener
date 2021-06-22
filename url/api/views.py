@@ -3,7 +3,8 @@ import re
 
 from django.shortcuts import redirect
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from url.hash_checker import url_hash_exists
@@ -22,6 +23,7 @@ def retrieve_url(request, existing_hash):
         {'Error':'Url not found'}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create_url(request):
     if not 'raw' in request.data:
         return Response(
@@ -31,7 +33,8 @@ def create_url(request):
         serializer_data = {
             'raw': request.data['raw'],
             'url_hash': '',
-            'short': ''
+            'short': '',
+            'created_by': request.user
         }
         if 'custom' in request.data:
             if not re.search(r'^[a-zA-Z0-9]{3,8}$', request.data['custom']):
@@ -55,7 +58,8 @@ def create_url(request):
         serializer_data['short'] = ('https://shortn-it.herokuapp.com'
                                     f'/{serializer_data["url_hash"]}/')
 
-        serializer = UrlSerializer(data=serializer_data)
+        context = {'request': request}
+        serializer = UrlSerializer(data=serializer_data, context=context)
         if serializer.is_valid():
             serializer.save()
             return Response(
@@ -63,3 +67,13 @@ def create_url(request):
 
         return Response(
             serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_urls(request):
+    urls = Url.objects.filter(created_by=request.user)
+    if len(urls) == 0:
+        return Response({'response': 'no urls found for this user'})
+
+    serializer = UrlSerializer(urls, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)

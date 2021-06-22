@@ -10,7 +10,7 @@ class Url(models.Model):
     created_by = models.ForeignKey(Account, default=None, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.url_hash + ' ' + self.created_by
+        return self.url_hash + ' | ' + self.created_by.username
 
     class Meta:
         ordering = ['-created_on']

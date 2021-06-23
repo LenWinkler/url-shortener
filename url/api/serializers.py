@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from account.models import Account
 from url.models import Url
 
 

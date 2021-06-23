@@ -13,7 +13,7 @@ from url.api.serializers import UrlSerializer
 
 
 @api_view(['GET'])
-def retrieve_url(request, existing_hash):
+def retrieve_url_view(request, existing_hash):
     url_is_valid = url_hash_exists(existing_hash)
     if url_is_valid:
         serializer = UrlSerializer(url_is_valid)
@@ -24,7 +24,7 @@ def retrieve_url(request, existing_hash):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def create_url(request):
+def create_url_view(request):
     if not 'raw' in request.data:
         return Response(
                         {"Error": "Missing 'raw' key in body of request"},
@@ -70,10 +70,25 @@ def create_url(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_urls(request):
+def get_urls_view(request):
     urls = Url.objects.filter(created_by=request.user)
     if len(urls) == 0:
         return Response({'response': 'no urls found for this user'})
 
     serializer = UrlSerializer(urls, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_url_view(request):
+    try:
+        url = Url.objects.get(url_hash=request.data['url_hash'])
+    except Url.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.user != url.created_by:
+        return Response({'error': 'cannot delete another users url'},
+                        status=status.HTTP_403_FORBIDDEN)
+    url.delete()
+    return Response({'response': 'url deleted successfully'})
+    

@@ -2,6 +2,7 @@ from django.db import models
 
 from account.models import Account
 
+
 class Url(models.Model):
     raw = models.CharField(max_length=250)
     url_hash = models.CharField(max_length=8)

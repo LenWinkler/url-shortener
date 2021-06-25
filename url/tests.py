@@ -6,10 +6,6 @@ from account.models import Account
 
 class URLTestCases(APITestCase):
 
-    # need tests for
-    #   - update current tests to use tokens
-    #   - create url and custom url with no auth (should fail)
-
     def test_create_url(self):
         account = Account.objects.create(
             username = 'testuser',
@@ -25,6 +21,14 @@ class URLTestCases(APITestCase):
             }
         response = client.post('/', data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_create_url_no_auth(self):
+        data = {
+            "raw": ("https://realpython.com/pypi-publish-python-package/"
+                   "#preparing-your-package-for-publication")
+            }
+        response = self.client.post('/', data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         
     def test_create_custom_url(self):
         account = Account.objects.create(
@@ -42,6 +46,15 @@ class URLTestCases(APITestCase):
             }
         response = client.post('/', data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_create_custom_url_no_auth(self):
+        data = {
+            "raw": ("https://realpython.com/pypi-publish-python-package/"
+                   "#preparing-your-package-for-publication"),
+            "custom": "custom25"
+            }
+        response = self.client.post('/', data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_visit_url(self):
         account = Account.objects.create(
@@ -127,8 +140,4 @@ class URLTestCases(APITestCase):
             }
         response = client.post('/', data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    def test_visit_invalid_url(self):
-        response = self.client.get('http://127.0.0.1:8000/MadeItUp/')
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
     

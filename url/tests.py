@@ -140,4 +140,68 @@ class URLTestCases(APITestCase):
             }
         response = client.post('/', data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_delete_url(self):
+        account = Account.objects.create(
+            username = 'testuser',
+            email = 'test@testing.com',
+            password = 'testinguser',
+        )
+        token = Token.objects.get(user=account)
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        data = {
+            "raw": ("https://realpython.com/pypi-publish-python-package/"
+                   "#preparing-your-package-for-publication")
+            }
+        POST_response = client.post('/', data)
+        url_hash = POST_response.data['url_hash']
+        DEL_response = client.delete('/delete', {'url_hash': url_hash})
+        self.assertEqual(DEL_response.status_code, status.HTTP_200_OK)
+
+    def test_delete_url_no_auth(self):
+        account = Account.objects.create(
+            username = 'testuser',
+            email = 'test@testing.com',
+            password = 'testinguser',
+        )
+        token = Token.objects.get(user=account)
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        data = {
+            "raw": ("https://realpython.com/pypi-publish-python-package/"
+                   "#preparing-your-package-for-publication")
+            }
+        POST_response = client.post('/', data)
+        url_hash = POST_response.data['url_hash']
+        client.credentials()
+        DEL_response = client.delete('/delete', {'url_hash': url_hash})
+        self.assertEqual(DEL_response.status_code,
+                        status.HTTP_401_UNAUTHORIZED)
     
+    def test_delete_url_another_users_url(self):
+        account = Account.objects.create(
+            username = 'testuser',
+            email = 'test@testing.com',
+            password = 'testinguser',
+        )
+        token = Token.objects.get(user=account)
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        data = {
+            "raw": ("https://realpython.com/pypi-publish-python-package/"
+                   "#preparing-your-package-for-publication")
+            }
+        POST_response = client.post('/', data)
+        url_hash = POST_response.data['url_hash']
+        
+        account2 = Account.objects.create(
+            username = 'testuser2',
+            email = 'test2@testing.com',
+            password = 'testinguser',
+        )
+        token = Token.objects.get(user=account2)
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        DEL_response = client.delete('/delete', {'url_hash': url_hash})
+        self.assertEqual(DEL_response.status_code, status.HTTP_403_FORBIDDEN)

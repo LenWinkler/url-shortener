@@ -4,6 +4,7 @@ from rest_framework.test import APIClient, APITestCase
 
 from account.models import Account
 
+
 class URLTestCases(APITestCase):
 
     def test_create_url(self):
@@ -73,6 +74,33 @@ class URLTestCases(APITestCase):
         GET_response = self.client.get(short_url)
         self.assertEqual(GET_response.status_code,
                          status.HTTP_301_MOVED_PERMANENTLY)
+
+    def test_get_all_user_urls(self):
+        account = Account.objects.create(
+            username = 'testuser',
+            email = 'test@testing.com',
+            password = 'testinguser',
+        )
+        token = Token.objects.get(user=account)
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        url1 = {
+            "raw": ("https://realpython.com/pypi-publish-python-package/"
+                   "#preparing-your-package-for-publication")
+            }
+        url2 = {
+            "raw": ("https://www.freecodecamp.org/news/"
+                   "coding-interviews-for-dummies-5e048933b82b/")
+            }
+        url3 = {
+            "raw": ("https://www.django-rest-framework.org/api-guide/"
+                   "authentication/#tokenauthentication")
+            }
+        client.post('/', url1)
+        client.post('/', url2)
+        client.post('/', url3)
+        response = client.get('/urls')
+        self.assertEqual(len(response.data), 3)
 
     def test_no_raw_key(self):
         account = Account.objects.create(
@@ -194,7 +222,7 @@ class URLTestCases(APITestCase):
             }
         POST_response = client.post('/', data)
         url_hash = POST_response.data['url_hash']
-        
+
         account2 = Account.objects.create(
             username = 'testuser2',
             email = 'test2@testing.com',

@@ -1,6 +1,6 @@
 # Url shortener backend
 
-Backend for an app which allows users to create an account and create shortened urls. Built with Django Rest Framework and using DRF's token authentication. I don't know how a URL shortener actually works so this was my attempt to reverse engineer the basic functionality of one. 
+Backend for an app which allows users to register an account and create shortened urls. Built with Django Rest Framework and using DRF's token authentication. I don't know how a URL shortener actually works so this was my attempt to reverse engineer the basic functionality of one. 
 
 ###### ***Note: If this was a production app, I'd purchase a shorter domain name to use!***  😁
 

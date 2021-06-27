@@ -1,41 +1,95 @@
-# url-shortener
+# Url shortener backend
 
-URL shortener built with Django Rest Framework. User provides a url and the api returns an alternate URL that will redirect to the original.
-I don't know how a URL shortener actually works so this was my attempt to reverse engineer the basic functionality of one. ***Note: If this was a production app, I'd obviously purchase a shorter domain name to use!***  😁
+Backend for an app which allows users to create an account and create shortened urls. Built with Django Rest Framework and using DRF's token authentication. I don't know how a URL shortener actually works so this was my attempt to reverse engineer the basic functionality of one. 
 
-## There are two endpoints:
+###### ***Note: If this was a production app, I'd purchase a shorter domain name to use!***  😁
 
-### POST - https://shortn-it.herokuapp.com/
-Endpoint for creating a new URL. The raw URL is passed in the body of the POST request with the key 'raw'. Example request:
+***For endpoints requiring an auth token, token is passed in header under 'Authorization' with following format:***
+
 ```
-{
-    "raw": "https://realpython.com/pypi-publish-python-package/#preparing-your-package-for-publication"
-}
+'token <auth token>'
 ```
-Response:
+
+## *User Accounts* endpoints:
+
+#### Register User
+
+``` http
+POST shortn-it.herokuapp.com/account/api/register
 ```
-{
-    "raw": "https://realpython.com/pypi-publish-python-package/#preparing-your-package-for-publication",
-    "url_hash": "a65417c4",
-    "short": "https://shortn-it.herokuapp.com/a65417c4/"
-}
+
+| Parameter   | Type     | Description                         |
+| :---------- | :------- | :---------------------------------- |
+| `username`  | `string` | **Required**. Username for the user |
+| `email`     | `string` | **Required**. Email for the user    |
+| `password`  | `string` | **Required**. The user's password   |
+| `password2` | `string` | **Required**. Confirm password      |
+
+#### User Login
+
+``` http
+POST shortn-it.herokuapp.com/account/api/login
 ```
-Can specify a custom URL (3-8 alphanumeric chars) to use by including it in the request body with the key 'custom'. Example request:
+
+| Parameter   | Type     | Description                         |
+| :---------- | :------- | :---------------------------------- |
+| `username`  | `string` | **Required**. Username for the user |
+| `password`  | `string` | **Required**. The user's password   |
+
+#### Get Account Details (*requires auth token*)
+
+``` http
+GET shortn-it.herokuapp.com/account/api/properties
 ```
-{
-    "raw": "https://realpython.com/pypi-publish-python-package/#preparing-your-package-for-publication",
-    "custom": "custom"
-}
+
+#### Update User Account (*requires auth token*)
+
+``` http
+PUT shortn-it.herokuapp.com/account/api/properties/update
 ```
-Response:
+
+| Parameter   | Type     | Description                   |
+| :---------- | :------- | :---------------------------- |
+| `username`  | `string` | Updated username for the user |
+| `email`     | `string` | Updated email for the user    |
+
+#### Delete User (*requires auth token*)
+
+``` http
+DELETE shortn-it.herokuapp.com/account/api/delete
 ```
-{
-    "raw": "https://realpython.com/pypi-publish-python-package/#preparing-your-package-for-publication",
-    "url_hash": "custom",
-    "short": "https://shortn-it.herokuapp.com/custom/"
-}
+
+## *Url endpoints*
+
+#### Create New Url (*requires auth token*)
+
+``` http
+POST shortn-it.herokuapp.com
 ```
-### GET - https://shortn-it.herokuapp.com/<url_hash>/
-Endpoint for visiting a created URL. If <url_hash> is in the db, will redirect user to the raw URL associated with that URL hash. For example,
-let's say we created the 'custom' url above. Visiting *shortn-it.herokuapp.com/custom/* would redirect the user to the original URL,
-*https://realpython.com/pypi-publish-python-package/#preparing-your-package-for-publication*.
+
+| Parameter | Type     | Description                                                  |
+| :-------- | :------- | :----------------------------------------------------------- |
+| `raw`     | `string` | **Required**. Raw url to be shortened                        |
+| `custom`  | `string` | Custom url between 3-8 characters to be used instead of hash |
+
+#### Visit Created Url
+
+``` http
+GET shortn-it.herokuapp.com/<url hash>
+```
+
+#### Get User's Urls (*requires auth token*)
+
+``` http
+GET shortn-it.herokuapp.com/urls
+```
+
+#### Delete Url (*requires auth token*)
+
+``` http
+DELETE shortn-it.herokuapp.com/delete
+```
+
+| Parameter  | Type     | Description                                 |
+| :--------- | :------- | :------------------------------------------ |
+| `url_hash` | `string` | **Required**. Hash of the url to be deleted |
